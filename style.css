@@ -174,7 +174,11 @@ body, input, button, textarea {
 }
 
 #recording-button img {
-  padding: 5%;
+  width: 60%;
+  height:60%;
+  object-fit: contain;
+  display:block;
+  padding:0;
   transition: all 0.2s ease;
 }
 
