@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   recognition.lang = "en-US";
   recognition.continuous = true;
-  recognition.interimResults = true;
+  recognition.interimResults = false;
 
   let isRecording = false;
   let lastTranscript = "";
@@ -93,31 +93,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // Handle recognition results
   // ----------------------------
   recognition.onresult = function(event) {
-    const transcript = event.results[event.results.length - 1][0].transcript
-      .trim()
-      .toLowerCase();
+  const transcript = event.results[event.results.length - 1][0].transcript
+    .trim()
+    .toLowerCase();
 
-    if (transcript === lastTranscript) return;
-    lastTranscript = transcript;
+  if (transcript === lastTranscript) return;
+  lastTranscript = transcript;
 
-    const parts = transcript.split(/\s+/);
-    parts.forEach(part => {
-      const letter = letterMap[part];
-      if (letter) {
-        wordInput.value += letter;
-        console.log("Detected letter:", letter, "Current word:", wordInput.value);
+  const parts = transcript.split(/\s+/);
+  parts.forEach(part => {
+    const letter = letterMap[part];
+    if (letter) {
+      wordInput.value += letter;
+      console.log("Detected letter:", letter, "Current word:", wordInput.value);
 
-        // Speak each letter immediately
-        const utterance = new SpeechSynthesisUtterance(letter);
-        utterance.lang = "en-US";
-        utterance.rate = 1;
-        utterance.pitch = 1;
-        window.speechSynthesis.speak(utterance);
-      } else {
-        console.log("Unrecognized input:", part);
-      }
-    });
-  };
+      // Removed per-letter speech
+      // const utterance = new SpeechSynthesisUtterance(letter);
+      // utterance.lang = "en-US";
+      // utterance.rate = 1;
+      // utterance.pitch = 1;
+      // window.speechSynthesis.speak(utterance);
+    } else {
+      console.log("Unrecognized input:", part);
+    }
+  });
+};
 
   // ----------------------------
   // Handle recognition errors
