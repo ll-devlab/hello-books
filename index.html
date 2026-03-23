@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hello Books</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Coiny&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="assets/icons/app-icon-180.svg">
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+
+<main>
+
+<h1 id="main-title">HELLO BOOKS!</h1>
+
+<div id="instructions-container">
+<button id="instructions-toggle" aria-expanded="false">
+    Quick Guide ▼
+  </button>
+
+<div id="instructions-content">
+<ol id="steps">
+
+<li>
+Tap the Record button
+<span class="mini-icon">
+<img src="assets/icons/microphone-icon-192.svg" alt="">
+</span>
+and spell out the word, or type it into the box.
+</li>
+
+<li>Tap the Record button again when you are finished.</li>
+
+<li>Tap the Submit button to see and hear the word and its definition.</li>
+
+<li>
+Tap the speaker button
+<span class="mini-icon">
+<img src="assets/icons/speech-icon-192-white.svg" alt="">
+</span>
+below to hear the pronunciation.
+</li>
+
+<li>
+To hear another pronunciation, tap the Online
+<span class="mini-icon">
+<img src="assets/icons/online-icon-192-white.svg" alt="">
+</span>
+button.
+</li>
+
+</ol>
+</div>
+</div>
+
+
+<!-- INPUT AREA -->
+
+<div id="word-input-area">
+
+<button id="recording-button" aria-label="Start voice spelling">
+<img src="assets/icons/microphone-icon-192.svg" alt="">
+</button>
+
+<div id="input-group">
+
+<input
+type="text"
+id="word-input"
+placeholder="Spell out or type a word"
+autocomplete="off"
+>
+
+<button id="submit-word" aria-label="Submit Word">
+Submit
+</button>
+
+</div>
+
+</div>
+
+
+<!-- WORD RESULT -->
+
+<section id="word-result">
+
+<label>Word:</label>
+
+<div id="displayed-word"></div>
+
+</section>
+
+
+<!-- DEFINITION RESULT -->
+
+<section id="definition-result">
+
+<label>Definition:</label>
+
+<div id="definition-layout">
+
+<div id="word-definition" aria-live="polite"></div>
+
+<div id="play-buttons">
+
+<button
+id="play-pronunciation"
+class="icon-button"
+aria-label="Play pronunciation"
+>
+<img src="assets/icons/speech-icon-192-white.svg" alt="">
+</button>
+
+<button
+id="hear-online"
+class="icon-button"
+aria-label="Hear online pronunciation"
+>
+<img src="assets/icons/online-icon-192-white.svg" alt="">
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+</main>
+
+</body>
+</html>
