@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   recognition.lang = "en-US";
   recognition.continuous = true;
-  recognition.interimResults = false;
+  recognition.interimResults = true;
 
   let isRecording = false;
   let lastTranscript = "";
