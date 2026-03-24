@@ -65,6 +65,7 @@ body, input, button, textarea {
 
 
 #get-definition {
+  flex: 1;
   margin-top: 8px;
   padding: 10px 16px;
   background: #F8629C;
@@ -88,6 +89,7 @@ body, input, button, textarea {
 
 
 #speak-definition {
+  flex: 1;
   margin-top: 6px;
   padding: 10px 16px;
   background: #F8629C;
