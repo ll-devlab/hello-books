@@ -52,6 +52,7 @@ body, input, button, textarea {
   outline: none;
   background: white;
   max-width:200px;
+  color: grey; 
 }
 
 #speak-word {
