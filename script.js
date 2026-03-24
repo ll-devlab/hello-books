@@ -32,24 +32,23 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------
   // Speech function
   // ----------------------------
+function speak(text) {
 
-  function speak(text) {
+  if (!text) return;
 
-    if (!text) return;
+  window.speechSynthesis.cancel();
 
-    window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
 
-    const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
 
-    utterance.lang = "en-US";
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
+  utterance.voice = voices.find(v => v.lang === "en-US") || null;
 
-    utterance.voice = voices.find(v => v.lang === "en-US") || null;
+  window.speechSynthesis.speak(utterance);
 
-    window.speechSynthesis.speak(utterance);
-
-  }
+}
 
   // ----------------------------
   // Speak typed word
@@ -66,11 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   currentDefinition = result.definition;
   audioURL = result.audio;
-  lastSearchedWord = word;
 
   definitionBox.textContent = currentDefinition;
 
   updateCheckOnlineLink(word);
+
+  // stop any speech already happening
+  window.speechSynthesis.cancel();
 
   // play pronunciation
   if (audioURL) {
