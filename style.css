@@ -100,3 +100,14 @@ input, button, textarea {
   cursor: pointer;
   font-weight: bold;
 }
+
+#check-online {
+  flex: 1;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: #F8629C;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}

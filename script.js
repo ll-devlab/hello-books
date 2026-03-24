@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const getDefinitionBtn = document.getElementById("get-definition");
   const definitionBox = document.getElementById("definition-box");
   const speakDefinitionBtn = document.getElementById("speak-definition");
+  const checkOnlineBtn = document.getElementById("check-online"); // new button
 
   let currentDefinition = ""; // store latest definition for speech
   let voices = [];
@@ -48,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const word = wordInput.value.trim();
     if (!word) return;
     speak(word);
+
+    updateCheckOnlineLink(word); // keep online link synced
   });
 
   // ----------------------------
@@ -83,6 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
     definitionBox.textContent = "Loading definition...";
     currentDefinition = await fetchDefinition(word);
     definitionBox.textContent = currentDefinition;
+
+    updateCheckOnlineLink(word); // update Merriam-Webster link
   });
 
   // ----------------------------
@@ -92,5 +97,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!currentDefinition) return;
     speak(currentDefinition);
   });
+
+  // ----------------------------
+  // Update the Merriam-Webster link dynamically
+  // ----------------------------
+  function updateCheckOnlineLink(word) {
+    if (!word) return;
+    const merriamUrl = `https://www.merriam-webster.com/dictionary/${encodeURIComponent(word)}`;
+    checkOnlineBtn.onclick = () => window.open(merriamUrl, "_blank", "noopener");
+  }
 
 });
