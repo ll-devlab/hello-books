@@ -10,14 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let voices = [];
 
   // ----------------------------
-  // Preload voices to avoid double speech
+  // Preload voices and prevent duplicates
   // ----------------------------
   function loadVoices() {
     voices = window.speechSynthesis.getVoices();
     if (voices.length === 0) {
       window.speechSynthesis.addEventListener("voiceschanged", () => {
         voices = window.speechSynthesis.getVoices();
-      });
+      }, { once: true }); // ensures listener runs only once
     }
   }
 
@@ -29,14 +29,15 @@ document.addEventListener("DOMContentLoaded", () => {
   function speak(text) {
     if (!text) return;
 
+    // Cancel any ongoing speech to prevent double-speak
+    window.speechSynthesis.cancel();
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "en-US";
     utterance.rate = 0.9;
     utterance.pitch = 1.0;
     utterance.voice = voices.find(v => v.lang === "en-US") || null;
 
-    // Cancel any ongoing speech to prevent double-speak
-    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   }
 
