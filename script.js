@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const speakDefinitionBtn = document.getElementById("speak-definition");
   const checkOnlineBtn = document.getElementById("check-online");
 
-  const API_KEY = "YOUR_API_KEY";
+  const API_KEY = "9c542b37-09b9-4c28-a951-aed2c6650a9f";
 
   let currentDefinition = "";
   let audioURL = null;
@@ -15,8 +15,14 @@ document.addEventListener("DOMContentLoaded", () => {
   let lastSearchedWord = "";
   let currentAudio = null;
 
-  // Detect Safari
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  // Detect Safari reliably
+const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+
+if (isSafari) {
+  console.log("Safari detected");
+} else {
+  console.log("Not Safari");
+}
 
   // ----------------------------
   // Load voices
