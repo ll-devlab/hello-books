@@ -1,151 +1,57 @@
-/* PAGE SETUP */
 
 html, body {
   margin: 0;
   background: aquamarine;
   height: 100%;
-}
-
-body {
+  font-family: "Lexend", sans-serif;
   display: flex;
   justify-content: center;
 }
-
-/* MAIN APP COLUMN */
 
 main {
   width: 100%;
   max-width: 375px;
   padding: 16px;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
-  gap: 10px;
-
-  min-height: 100vh; /* instead of 100dvh */
+  gap: 12px;
+  min-height: 100vh;
+  margin:10px;
 }
 
-/* TYPOGRAPHY */
 
-h1{
-  color:#F8629C;
-  text-align:center;
+h1 {
+  color: #F8629C;
+  text-align: center;
   font-family: Coiny;
-  margin:0;
+  margin: 0;
   letter-spacing: 1px;
   text-shadow: 2px 2px 0px black;
 }
 
-#instructions {
-  font-size: 18px; /* adjust smaller as needed */
-  padding-top:20px;
-}
-
 body, input, button, textarea {
   font-family: "Lexend", sans-serif;
+  font-size:20px;
 }
 
-/* Collapsible container styling */
-#instructions-container {
-  margin-bottom: 16px;
-}
-
-/* Toggle button styling */
-#instructions-toggle {
+#word-container {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  background: #F8629C;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 10px 16px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
+  align-items: stretch;
 }
-
-/* Hidden content initially */
-#instructions-content {
-  max-height: 0;             /* hidden */
-  overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-  background: #ffffffaa;     /* optional: slightly transparent box */
-  border-radius: 0 0 6px 6px;
-  padding: 0 16px;           /* will expand padding when opened */
-}
-
-/* Open state */
-#instructions-container.open #instructions-content {
-  max-height: 500px;         /* large enough to fit content */
-  padding: 10px 16px;
-}
-
-#steps{
-  margin:4px 0 8px 0;
-  padding-left:20px;
-    font-size: 14px; /* adjust to taste */
-  line-height: 1.5; /* makes it easier to read on small screens */
-}
-
-#steps li{
-  margin:4px 0;
-}
-
-/* MINI ICONS USED IN INSTRUCTIONS */
-
-.mini-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 20px;
-  height: 20px;
-
-  background-color: #F8629C;
-  border-radius: 50%;
-  margin: 0 4px;
-}
-
-.mini-icon img {
-  width: 15px;
-  height: 15px;
-  object-fit: contain;
-  display: block;
-}
-
-/* INPUT AREA */
-
-#word-input-area{
-  display:flex;
-  align-items:stretch;
-  gap:10px;
-  height:48px;
-}
-
-#input-group {
-  display: flex;
-  flex: 1;
-}
-
-/* INPUT FIELD */
 
 #word-input {
   flex: 1;
   padding: 10px;
-
-  background: white;
+  font-weight: 600;
   border: 2px solid #F8629C;
-  border-right: none;
-
   border-radius: 10px 0 0 10px;
-  font-size: 16px;
+  outline: none;
+  background: white;
+  max-width:200px;
 }
 
-/* SUBMIT BUTTON */
-
-#submit-word {
+#speak-word {
   padding: 10px 16px;
   background: #F8629C;
   border: none;
@@ -154,133 +60,36 @@ body, input, button, textarea {
   font-weight: bold;
 }
 
-/* RECORD BUTTON */
 
-#recording-button{
-  height:100%;
-  aspect-ratio:1/1;
-
-  border-radius:50%;
-  background:#F8629C;
-  border:none;
-  cursor:pointer;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-#recording-button:hover {
-  transform: scale(1.05);
-}
-
-#recording-button img {
-  width: 60%;
-  height:60%;
-  object-fit: contain;
-  display:block;
-  padding:0;
-  transition: all 0.2s ease;
-}
-
-/* RECORDING ANIMATION */
-
-#recording-button.recording img {
-  animation: mic-blink 1s infinite;
-}
-
-@keyframes mic-blink {
-  0% {
-    content: url("assets/icons/microphone-icon-192.svg");
-  }
-  50% {
-    content: url("assets/icons/microphone-icon-192-click.svg");
-  }
-  100% {
-    content: url("assets/icons/microphone-icon-192.svg");
-  }
-}
-
-/* LABEL SPACING */
-#word-result label,
-#definition-result label {
-  display: block;
-  margin-bottom: 6px; /* ensures stable spacing above boxes */
-  font-weight: bold;
-}
-
-/* WORD RESULT BOX */
-
-#displayed-word {
-  min-height: 50px;   /* ensures box height stays stable even when empty */
-  padding: 14px;
-  font-size: 34px;
-  font-weight: bold;
-  text-align: center;
-  background: white;
-  border: 2px solid #F8629C;
-  border-radius: 10px;
-  box-sizing: border-box;
-}
-
-/* DEFINITION SECTION LAYOUT */
-
-#definition-layout {
-  display: grid;
-  grid-template-columns: 1fr auto; /* definition box fills remaining width, play buttons take auto width */
-  gap: 10px;
-  flex: 1 1 auto; /* allow it to shrink within the flex column */
-  min-height: 0; /* allows inner overflow to work */
-}
-
-
-/* DEFINITION TEXT BOX */
-
-#word-definition {
-  min-height: 100px;  /* adjust to how tall you want it when empty */
-  padding: 12px;
-  overflow-y: auto;   /* scrolls if content is too tall */
-  background: white;
-  border: 2px solid #F8629C;
-  border-radius: 10px;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-#definition-result {
-  flex: 1 1 auto; /* allow shrinking */
-  display: flex;
-  flex-direction: column;
-  min-height: 0; /* important for scrolling */
-   padding-bottom: 20px;
-   margin-bottom:10px;
-}
-
-
-/* PLAY BUTTON COLUMN */
-#play-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: flex-end;
-}
-/* ICON BUTTONS */
-
-.icon-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 40px;
-  height: 40px;
-
+#get-definition {
+  margin-top: 8px;
+  padding: 10px 16px;
   background: #F8629C;
   border: none;
-  border-radius: 50%;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: bold;
 }
 
-.icon-button img {
-  width: 22px;
-  height: 22px;
+
+#definition-box {
+  margin-top: 12px;
+  min-height: 100px;
+  padding: 12px;
+  background: white;
+  border: 2px solid #F8629C;
+  border-radius: 10px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+
+#speak-definition {
+  margin-top: 6px;
+  padding: 10px 16px;
+  background: #F8629C;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
 }
