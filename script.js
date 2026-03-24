@@ -13,100 +13,92 @@ document.addEventListener("DOMContentLoaded", () => {
   let audioURL = null;
   let voices = [];
   let lastSearchedWord = "";
+  let currentAudio = null;
 
   // ----------------------------
-  // Load speech synthesis voices
+  // Load voices
   // ----------------------------
 
   function loadVoices() {
-    voices = window.speechSynthesis.getVoices();
-    if (voices.length === 0) {
-      window.speechSynthesis.addEventListener("voiceschanged", () => {
-        voices = window.speechSynthesis.getVoices();
+
+    voices = speechSynthesis.getVoices();
+
+    if (!voices.length) {
+
+      speechSynthesis.addEventListener("voiceschanged", () => {
+        voices = speechSynthesis.getVoices();
       }, { once: true });
+
     }
+
   }
 
   loadVoices();
 
   // ----------------------------
-  // Speech function
-  // ----------------------------
-function speak(text) {
-
-  if (!text) return;
-
-  window.speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-
-  utterance.lang = "en-US";
-  utterance.rate = 0.9;
-  utterance.pitch = 1;
-
-  utterance.voice = voices.find(v => v.lang === "en-US") || null;
-
-  window.speechSynthesis.speak(utterance);
-
-}
-
-  // ----------------------------
-  // Speak typed word
+  // Stop all audio
   // ----------------------------
 
- speakWordBtn.addEventListener("click", async () => {
+  function stopAllAudio() {
 
-  const word = wordInput.value.trim();
-  if (!word) return;
+    speechSynthesis.cancel();
 
-  definitionBox.textContent = "Loading definition...";
-
-  const result = await fetchDefinition(word);
-
-  currentDefinition = result.definition;
-  audioURL = result.audio;
-
-  definitionBox.textContent = currentDefinition;
-
-  updateCheckOnlineLink(word);
-
-  // stop any speech already happening
-  window.speechSynthesis.cancel();
-
-  // play pronunciation
-  if (audioURL) {
-
-    const audio = new Audio(audioURL);
-    audio.play();
-
-  } else {
-
-    speak(word);
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+    }
 
   }
 
-});
+  // ----------------------------
+  // Text to speech
+  // ----------------------------
+
+  function speak(text) {
+
+    if (!text) return;
+
+    stopAllAudio();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "en-US";
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+
+    utterance.voice =
+      voices.find(v => v.lang.startsWith("en")) || voices[0];
+
+    speechSynthesis.speak(utterance);
+
+  }
 
   // ----------------------------
-  // Fetch Merriam-Webster definition
+  // Fetch definition
   // ----------------------------
 
   async function fetchDefinition(word) {
 
-    const url = `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${encodeURIComponent(word)}?key=${API_KEY}`;
+    const url =
+      `https://www.dictionaryapi.com/api/v3/references/collegiate/json/${encodeURIComponent(word)}?key=${API_KEY}`;
 
     try {
 
       const response = await fetch(url);
       const data = await response.json();
 
-      // If API returns suggestions instead of definitions
+      if (!data.length) {
+        return { definition: "No definition found.", audio: null };
+      }
+
+      // Suggestions
       if (typeof data[0] === "string") {
 
-        const suggestion = data[0];
+        const suggestions = data.slice(0,3).join(", ");
 
         return {
-          definition: `Did you mean: ${suggestion}?`,
+          definition: `Did you mean: ${suggestions}?`,
           audio: null
         };
 
@@ -114,7 +106,7 @@ function speak(text) {
 
       const entry = data[0];
 
-      if (!entry || !entry.shortdef) {
+      if (!entry.shortdef) {
 
         return {
           definition: "No definition found.",
@@ -125,10 +117,10 @@ function speak(text) {
 
       const definition = entry.shortdef[0];
 
-      // Extract pronunciation audio
+      // pronunciation audio
       let audio = null;
 
-      if (entry.hwi && entry.hwi.prs && entry.hwi.prs[0].sound) {
+      if (entry.hwi?.prs?.[0]?.sound?.audio) {
 
         const audioFile = entry.hwi.prs[0].sound.audio;
 
@@ -138,13 +130,14 @@ function speak(text) {
           /^[0-9]/.test(audioFile) ? "number" :
           audioFile[0];
 
-        audio = `https://media.merriam-webster.com/audio/prons/en/us/mp3/${subdirectory}/${audioFile}.mp3`;
+        audio =
+          `https://media.merriam-webster.com/audio/prons/en/us/mp3/${subdirectory}/${audioFile}.mp3`;
 
       }
 
       return {
-        definition: definition,
-        audio: audio
+        definition,
+        audio
       };
 
     } catch (err) {
@@ -152,7 +145,7 @@ function speak(text) {
       console.error(err);
 
       return {
-        definition: "Error fetching definition.",
+        definition: "Could not connect to dictionary service.",
         audio: null
       };
 
@@ -161,27 +154,67 @@ function speak(text) {
   }
 
   // ----------------------------
-  // Get definition
+  // Speak word button
+  // ----------------------------
+
+  speakWordBtn.addEventListener("click", async () => {
+
+    const word = wordInput.value.trim();
+    if (!word) return;
+
+    definitionBox.textContent = "Loading definition...";
+
+    const result = await fetchDefinition(word);
+
+    currentDefinition = result.definition;
+    audioURL = result.audio;
+    lastSearchedWord = word;
+
+    definitionBox.textContent = currentDefinition;
+
+    updateCheckOnlineLink(word);
+
+    stopAllAudio();
+
+    // play dictionary pronunciation
+    if (audioURL) {
+
+      currentAudio = new Audio(audioURL);
+      currentAudio.play();
+
+    } else {
+
+      speak(word);
+
+    }
+
+  });
+
+  // ----------------------------
+  // Get definition button
   // ----------------------------
 
   getDefinitionBtn.addEventListener("click", async () => {
 
-  const word = wordInput.value.trim();
-  if (!word) return;
+    const word = wordInput.value.trim();
+    if (!word) return;
 
-  definitionBox.textContent = "Loading definition...";
+    // prevent repeat calls
+    if (word === lastSearchedWord && currentDefinition) return;
 
-  const result = await fetchDefinition(word);
+    definitionBox.textContent = "Loading definition...";
 
-  currentDefinition = result.definition;
-  audioURL = result.audio;
-  lastSearchedWord = word;   // ADD THIS
+    const result = await fetchDefinition(word);
 
-  definitionBox.textContent = currentDefinition;
+    currentDefinition = result.definition;
+    audioURL = result.audio;
+    lastSearchedWord = word;
 
-  updateCheckOnlineLink(word);
+    definitionBox.textContent = currentDefinition;
 
-});
+    updateCheckOnlineLink(word);
+
+  });
 
   // ----------------------------
   // Speak definition
@@ -196,14 +229,28 @@ function speak(text) {
   });
 
   // ----------------------------
-  // Merriam-Webster link
+  // Enter key support
+  // ----------------------------
+
+  wordInput.addEventListener("keypress", (e) => {
+
+    if (e.key === "Enter") {
+      getDefinitionBtn.click();
+    }
+
+  });
+
+  // ----------------------------
+  // Merriam Webster link
   // ----------------------------
 
   function updateCheckOnlineLink(word) {
 
-    const url = `https://www.merriam-webster.com/dictionary/${encodeURIComponent(word)}`;
+    const url =
+      `https://www.merriam-webster.com/dictionary/${encodeURIComponent(word)}`;
 
-    checkOnlineBtn.onclick = () => window.open(url, "_blank", "noopener");
+    checkOnlineBtn.onclick =
+      () => window.open(url, "_blank", "noopener");
 
   }
 
