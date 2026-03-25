@@ -13,7 +13,21 @@ document.addEventListener("DOMContentLoaded", () => {
   let audioURL = null;
   let voices = [];
   let lastSearchedWord = "";
-  let currentAudio = null;
+  let audioPlayer = new Audio();
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+
+  audioPlayer.src = "";
+  audioPlayer.play().catch(() => {});
+  audioPlayer.pause();
+
+  audioUnlocked = true;
+}
+
+document.addEventListener("touchstart", unlockAudio, { once: true });
+document.addEventListener("click", unlockAudio, { once: true });
 
   // Detect Safari reliably
 const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
@@ -38,21 +52,20 @@ if (isSafari) {
   }
 
   loadVoices();
+speechSynthesis.getVoices();
 
   // ----------------------------
   // Stop all audio
   // ----------------------------
 
   function stopAllAudio() {
-    // Stop speechSynthesis only if we're going to use it
-    speechSynthesis.cancel();
 
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
-    }
-  }
+  speechSynthesis.cancel();
+
+  audioPlayer.pause();
+  audioPlayer.currentTime = 0;
+
+}
 
   // ----------------------------
   // Text-to-speech
@@ -67,7 +80,8 @@ if (isSafari) {
     utterance.lang = "en-US";
     utterance.rate = 0.9;
     utterance.pitch = 1;
-    utterance.voice = voices.find(v => v.lang.startsWith("en")) || voices[0];
+   utterance.voice =
+  voices.find(v => v.lang && v.lang.startsWith("en")) || null;
 
     speechSynthesis.speak(utterance);
   }
@@ -77,17 +91,24 @@ if (isSafari) {
   // ----------------------------
 
   function playWord(word) {
-    stopAllAudio();
 
-    if (audioURL) {
-      // Play dictionary pronunciation only, no speechSynthesis
-      currentAudio = new Audio(audioURL);
-      currentAudio.play();
-    } else {
-      // No audio, use speechSynthesis fallback
+  stopAllAudio();
+
+  if (audioURL) {
+
+    audioPlayer.src = audioURL;
+
+    audioPlayer.play().catch(() => {
       speak(word);
-    }
+    });
+
+  } else {
+
+    speak(word);
+
   }
+
+}
 
   // ----------------------------
   // Fetch definition
@@ -141,25 +162,27 @@ if (isSafari) {
   // ----------------------------
 
   speakWordBtn.addEventListener("click", async () => {
-    const word = wordInput.value.trim();
-    if (!word) return;
 
-    definitionBox.textContent = "Loading definition...";
+  unlockAudio();
 
-    const result = await fetchDefinition(word);
+  const word = wordInput.value.trim();
+  if (!word) return;
 
-    currentDefinition = result.definition;
-    audioURL = result.audio;
-    lastSearchedWord = word;
+  definitionBox.textContent = "Loading definition...";
 
-    definitionBox.textContent = currentDefinition;
+  const result = await fetchDefinition(word);
 
-    updateCheckOnlineLink(word);
+  currentDefinition = result.definition;
+  audioURL = result.audio;
+  lastSearchedWord = word;
 
-    // Safari-safe play
-    playWord(word);
-  });
+  definitionBox.textContent = currentDefinition;
 
+  updateCheckOnlineLink(word);
+
+  playWord(word);
+
+});
   // ----------------------------
   // Get definition button
   // ----------------------------
